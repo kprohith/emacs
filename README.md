@@ -2,17 +2,23 @@
 Emacs + Org-mode Config along with optimizations
 
 Emacs + Org-mode Config along with optimizations for Arch running i3 as the window manager and a minimal browser like qute or Firefox with vimium.
+
 Use as is at your own peril as this is a completely mouseless setup and WILL DEFINITELY not work on your local machine, unless you make some tweaks.
+
 This is by no means a complete config. I plan on adding stuff to it as I go.
+
 Read for yourself and pick and choose stuff you want to use in your own config.
+
 I plan on including my chemacs emacs-bootlaoder setup soon as well.
+
 This repo automatically updates itself everytime I make a change in my config.
+
 My current setup is:
-Arch with i3-gaps on dual monitors. Another headless machine running a bare-metal setup of Arch, that I can ssh into and offload some resource intensive tasks when needed.
-Emacs with evil-mode along with some custom key-maps
-Orgmode for my Zettelkasten
-Joplin for Journaling and non-technical note-taking
-Org-babel for running all of this config
+- Arch with i3-gaps on dual monitors. Another headless machine running a bare-metal setup of Arch, that I can ssh into and offload some resource intensive tasks when needed.
+- Emacs with evil-mode along with some custom key-maps
+- Orgmode for my Zettelkasten
+- Joplin for Journaling and non-technical note-taking
+- Org-babel for running all of this config
 
 Dependencies:
 
