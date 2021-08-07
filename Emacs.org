@@ -1,3 +1,9 @@
+#+title RMacs Configuration
+#+PROPERTY: header-args:emacs-lisp :tangle ./init.el
+* Startup Performance
+Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
+#+begin_src emacs-lisp
+
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
 
@@ -10,6 +16,13 @@
                               (time-subtract after-init-time before-init-time)))
                      gcs-done)))
 
+
+#+end_src
+* Structure Templates
+
+These templates enable you to type things like <el and then hit  Tab to expand the template
+#+begin_src emacs-lisp
+
 ;; This is needed as of Org 9.2
 (require 'org-tempo)
 
@@ -21,6 +34,14 @@
 (add-to-list 'org-structure-template-alist '("go" . "src go"))
 (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
 (add-to-list 'org-structure-template-alist '("json" . "src json"))
+
+
+
+#+end_src
+* User Interface
+** Basic UI
+Clean up Emacs' user interface.
+#+begin_src emacs-lisp
 
 (setq inhibit-startup-message t)
 
@@ -38,6 +59,10 @@
 (column-number-mode)
 (global-display-line-numbers-mode t)
 
+#+end_src
+** Theme
+#+begin_src emacs-lisp
+
 (use-package all-the-icons)
 
 
@@ -52,6 +77,21 @@
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
+#+end_src
+
+** Font Configuration 
+
+(set-face-attribute 'default nil :font "Fira Code Retina" :height 130)
+
+;; Set the fixed pitch face
+(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 130)
+
+;; Set the variable pitch face
+(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 145 :weight 'regular)
+
+** Hydra
+#+begin_src emacs-lisp
+
 (use-package hydra)
 
 (defhydra hydra-text-scale (:timeout 4)
@@ -63,6 +103,11 @@
 (rmacs/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
+#+end_src
+* Org Mode
+** Auto-tangle Configuration files
+#+begin_src emacs-lisp
+
 ;; Automatically tangle our Emacs.org config file when we save it
 (defun rmacs/org-babel-tangle-config ()
   (when (string-equal (buffer-file-name)
@@ -73,12 +118,18 @@
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
 
+#+end_src
+** Hooks
+#+begin_src emacs-lisp
 (dolist (mode '(org-mode-hook
 		term-mode-hook
 		shell-mode-hook
 		eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+#+end_src
+** Org-mode setup
+#+begin_src emacs-lisp
 (defun rmacs/org-mode-setup ()
   (org-indent-mode)
   (variable-pitch-mode 1)
@@ -254,6 +305,9 @@
 (use-package visual-fill-column
   :hook (org-mode . rmacs/org-mode-visual-fill))
 
+#+end_src
+** Org-roam
+#+begin_src emacs-lisp
 (use-package org-roam
       :ensure t
       :custom
@@ -269,6 +323,11 @@
       (org-roam-setup)
       ;; If using org-roam-protocol
       (require 'org-roam-protocol))
+
+#+end_src
+* Package Management
+
+#+begin_src emacs-lisp
 
 ;; Initialize package sources
 (require 'package)
@@ -288,9 +347,16 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+#+end_src
+* Key bindings
+#+begin_src emacs-lisp
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
+#+end_src
+* Completion System
+** Ivy and Counsel
+#+begin_src emacs-lisp
 (use-package counsel)
 
 (use-package ivy
@@ -325,6 +391,10 @@
 
 (global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
 
+#+end_src
+** Helpful
+#+begin_src emacs-lisp
+
 (use-package helpful
   :custom
   (counsel-describe-function-function #'helpful-callable)
@@ -335,6 +405,9 @@
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
 
+#+end_src
+** General
+#+begin_src emacs-lisp
 (use-package general
   :config
   (general-create-definer rmacs/leader-keys
@@ -346,12 +419,18 @@
    "t" '(:ignore t :which-key "toggles")
    "tt" '(counsel-load-theme :which-key "choose theme")))
 
+#+end_src
+** which-key
+#+begin_src emacs-lisp
 (use-package which-key
   :init (which-key-mode)
   :diminish which-key-mode
   :config
   (setq which-key-idle-delay 0.3))
 
+#+end_src
+* Evil
+#+begin_src emacs-lisp
 (defun rmacs/evil-hook ()
   (dolist (mode '(custom-mode
                   eshell-mode
@@ -389,6 +468,11 @@
   :config
   (evil-collection-init))
 
+
+#+end_src
+* Projectile
+#+begin_src emacs-lisp
+
 (use-package projectile
   :diminish projectile-mode
   :config (projectile-mode)
@@ -404,6 +488,10 @@
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
 
+#+end_src
+* Magit
+#+begin_src emacs-lisp
+
 (use-package magit
   :commands (magit-status magit-get-current-branch)
   :custom
@@ -412,7 +500,15 @@
 ;(use-package evil-magit
 ;  :after magit)
 
+#+end_src
+
+* Forge
+#+begin_src emacs-lisp
 (use-package forge)
+
+#+end_src
+* LSP Configuration
+#+begin_src emacs-lisp
 
 (defun rmacs/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
@@ -455,3 +551,8 @@
 
 (use-package company-box
   :hook (company-mode . company-box-mode))
+
+
+
+#+end_src
+
